@@ -8,6 +8,11 @@ import java.time.Duration;
 
 public class MainPage {
 
+    public enum PagePart {
+        TOP,
+        BOTTOM
+    }
+
     private final WebDriver driver;
     // кнопка принять куки
     private final String locatorButtonAcceptCookies = ".//button[@class='App_CookieButton__3cvqF']";
@@ -24,30 +29,23 @@ public class MainPage {
         clickAcceptCookies();
     }
 
-    // Кликнуть по строке в "Вопросы о важном"
-    public void clickAccordeonHeading(String locatorAccordeonHeading) {
-        WebElement element = driver.findElement(By.id(locatorAccordeonHeading));
+    // Кликнуть по вопросу в "Вопросы о важном"
+    public void clickAccordeonQuestion(String question) {
+//        WebElement element = driver.findElement(By.id(locatorAccordeonHeading));
+        WebElement element = driver.findElement(By.xpath(String.format("//div[text()='%s']", question)));
         // Скролл до элемента
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
         // Явное ожидание видимости элемента
         new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.elementToBeClickable(By.id(locatorAccordeonHeading)));
+                .until(ExpectedConditions.elementToBeClickable(By.xpath(String.format("//div[text()='%s']", question))));
         // Кликаем по строке
         element.click();
     }
 
-    // Получить текст из строки "Вопросы о важном"
-    public String getTextAccordeonHeading(String locatorAccordeonHeading) {
-        WebElement element = driver.findElement(By.id(String.valueOf(locatorAccordeonHeading)));
+    // Получить ответ под вопросом "Вопросы о важном"
+    public String getAccordeonAnswer(String question) {
+        WebElement element = driver.findElement(By.xpath(String.format("//div[text()='%s']/../../div[@class='accordion__panel']", question)));
         return element.getText();
-    }
-
-    // Получить текст из выпавшей панели (после клика по строке в "Вопросы о важном)
-    public String getTextAccordeonPanel (String locatorAccordeonPanel) {
-        // Явное ожидание видимости элемента
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.id(locatorAccordeonPanel)));
-        return driver.findElement(By.id(locatorAccordeonPanel)).getText();
     }
 
     // Клик по кнопке "да все привыкли" принять куки
@@ -61,11 +59,11 @@ public class MainPage {
     }
 
     // Клик по кнопке "Заказать"
-    public void clickOrder(String whereClick) {
+    public void clickOrder(PagePart whereClick) {
 
-        if (whereClick.equals("up")) {
+        if (whereClick == PagePart.TOP) {
             driver.findElement(By.xpath(locatorButtonOrderUP)).click();
-        } else if (whereClick.equals("down")) {
+        } else if (whereClick == PagePart.BOTTOM) {
             // Скролл до элемента
             WebElement element = driver.findElement(By.xpath(locatorButtonOrderDown));
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
@@ -73,3 +71,4 @@ public class MainPage {
         }
     }
 }
+

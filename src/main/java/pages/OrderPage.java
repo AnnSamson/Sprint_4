@@ -81,7 +81,6 @@ public class OrderPage {
     }
     //Проверка, что окно подтверждения заказа появилось
         public void chekOrderVerificationWindow() {
-            System.out.println(driver.findElement(By.className("Order_ModalHeader__3FDaJ")).getText());
             assert driver.findElement(By.className("Order_ModalHeader__3FDaJ")).getText().contains("Хотите оформить заказ?");
         }
     // Клик на кнопку "Да"
